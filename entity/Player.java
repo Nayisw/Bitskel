@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import main.AssetSetter;
 import main.GamePanel;
 import main.KeyHandler;
 
