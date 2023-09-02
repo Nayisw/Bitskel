@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 public class obj_key extends SuperObject{
     public obj_key(){
-        name= "key";
+        name= "Key";
         try {
             File file = new File("./res/objects/key.png");
             FileInputStream fis = new FileInputStream(file);
@@ -16,6 +16,7 @@ public class obj_key extends SuperObject{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
 
     }
     
