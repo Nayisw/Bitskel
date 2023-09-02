@@ -15,8 +15,8 @@ import main.GamePanel;
 public class TileManager {
 
     GamePanel gp;
-    Tile[] tile;
-    int mapTileNum[][];
+    public Tile[] tile;
+    public int mapTileNum[][];
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -39,48 +39,34 @@ public class TileManager {
             FileInputStream fis = new FileInputStream(file);
 
             tile[0] = new Tile();
-
             tile[0].image = ImageIO.read(fis);
 
             file = new File("./res/tiles/wall.png");
-
             fis = new FileInputStream(file);
-
             tile[1] = new Tile();
-
             tile[1].image = ImageIO.read(fis);
-
+            tile[1].collision=true;
+ 
             file = new File("./res/tiles/water.png");
-
             fis = new FileInputStream(file);
-
             tile[2] = new Tile();
-
             tile[2].image = ImageIO.read(fis);
-
+            
             file = new File("./res/tiles/earth.png");
-
             fis = new FileInputStream(file);
-
             tile[3] = new Tile();
-
             tile[3].image = ImageIO.read(fis);
-
+            
             file = new File("./res/tiles/sand.png");
-
             fis = new FileInputStream(file);
-
             tile[4] = new Tile();
-
             tile[4].image = ImageIO.read(fis);
-
+            
             file = new File("./res/tiles/tree.png");
-
             fis = new FileInputStream(file);
-
             tile[5] = new Tile();
-
             tile[5].image = ImageIO.read(fis);
+            tile[5].collision=true;
 
         } catch (IOException e) {
             e.printStackTrace();
