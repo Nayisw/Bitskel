@@ -18,7 +18,7 @@ public class Player extends Entity {
     
     public final int screenX;
     public final int screenY;
-    int hasKey= 0;
+    public int hasKey= 0;
 
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
@@ -46,19 +46,12 @@ public class Player extends Entity {
     public void getPlayerImage() {
         try {
             File f1 = new File("./res/player/boy_up_1.png");
-
             File f2 = new File("./res/player/boy_up_2.png");
-
             File f3 = new File("./res/player/boy_down_1.png");
-
             File f4 = new File("./res/player/boy_down_2.png");
-
             File f5 = new File("./res/player/boy_left_1.png");
-
             File f6 = new File("./res/player/boy_left_2.png");
-
             File f7 = new File("./res/player/boy_right_1.png");
-
             File f8 = new File("./res/player/boy_right_2.png");
 
             up1 = ImageIO.read(f1);
@@ -134,12 +127,14 @@ public class Player extends Entity {
 
             switch(objectName){
                 case "Key":
+                gp.playerSE(1);
                 hasKey++;
                 gp.obj[i] = null;
                 break;
 
                 case "Chest":
                 if(hasKey>0){
+                    gp.playerSE(3);
                     gp.obj[i] = null;
                     hasKey--;
                 }
