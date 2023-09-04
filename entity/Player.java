@@ -130,13 +130,20 @@ public class Player extends Entity {
                 gp.playerSE(1);
                 hasKey++;
                 gp.obj[i] = null;
+                gp.ui.ShowMessage("  Obtained Key!");
                 break;
 
                 case "Chest":
                 if(hasKey>0){
                     gp.playerSE(3);
+                    gp.music.stop();
+                    gp.playMusic(5);
                     gp.obj[i] = null;
                     hasKey--;
+                    
+                }
+                else{
+                    gp.ui.ShowMessage("You need a Key!");
                 }
                 break;
             }

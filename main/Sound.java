@@ -20,6 +20,7 @@ public class Sound {
         soundURL[2] = new File("./res/sound/fanfare.wav");
         soundURL[3] = new File("./res/sound/unlock.wav");
         soundURL[4] = new File("./res/sound/powerup.wav");
+        soundURL[5] = new File("./res/sound/Theme_2.wav");
 
     }
 
