@@ -2,7 +2,6 @@ package tile;
 
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +10,7 @@ import java.io.InputStreamReader;
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
+import main.UtilityTool;
 
 public class TileManager {
 
@@ -24,7 +24,7 @@ public class TileManager {
         tile = new Tile[10];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         getTileImage();
-        loadMap("./res/maps/world01.txt");
+        loadMap("./res/maps/world1.txt");
 
     }
 
@@ -32,48 +32,28 @@ public class TileManager {
 
     public void getTileImage() {
 
+        setup(0, "grass", false);
+        setup(1, "wall", true);
+        setup(2, "water", false);
+        setup(3, "earth", false);
+        setup(4, "sand", false);
+        setup(5, "tree", true);
+
+    }
+
+    public void setup(int index, String imageName, boolean collision) {
+        UtilityTool uTool = new UtilityTool();
+
         try {
-
-            File file = new File("./res/tiles/grass.png");
-
-            FileInputStream fis = new FileInputStream(file);
-
-            tile[0] = new Tile();
-            tile[0].image = ImageIO.read(fis);
-
-            file = new File("./res/tiles/wall.png");
-            fis = new FileInputStream(file);
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(fis);
-            tile[1].collision=true;
- 
-            file = new File("./res/tiles/water.png");
-            fis = new FileInputStream(file);
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(fis);
-            
-            file = new File("./res/tiles/earth.png");
-            fis = new FileInputStream(file);
-            tile[3] = new Tile();
-            tile[3].image = ImageIO.read(fis);
-            
-            file = new File("./res/tiles/sand.png");
-            fis = new FileInputStream(file);
-            tile[4] = new Tile();
-            tile[4].image = ImageIO.read(fis);
-            
-            file = new File("./res/tiles/tree.png");
-            fis = new FileInputStream(file);
-            tile[5] = new Tile();
-            tile[5].image = ImageIO.read(fis);
-            tile[5].collision=true;
-
+            tile[index] = new Tile();
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/" + imageName + ".png"));
+            tile[index].image = uTool.scaledImage(tile[index].image, gp.tileSize, gp.tileSize);
+            tile[index].collision = collision;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-    //TEXTURE LOADER
+    // TEXTURE LOADER
 
     public void loadMap(String filePatth) {
         try {
@@ -114,18 +94,19 @@ public class TileManager {
 
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            int worldX = worldCol * gp.tileSize; 
-            int worldY = worldRow * gp.tileSize; 
+            int worldX = worldCol * gp.tileSize;
+            int worldY = worldRow * gp.tileSize;
             int screenX = worldX - gp.player.worldX + gp.player.screenX;
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-            if (    worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+            if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
                     worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                     worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                     worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
 
-                g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-            }worldCol++;
+                g2.drawImage(tile[tileNum].image, screenX, screenY, null);
+            }
+            worldCol++;
 
             if (worldCol == 50) {
                 worldCol = 0;

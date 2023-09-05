@@ -2,7 +2,6 @@ package main;
 
 import java.io.File;
 
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -14,7 +13,7 @@ public class Sound {
     File[] soundURL = new File[30];
     FloatControl volumeControl;
 
-    public Sound(){
+    public Sound() {
         soundURL[0] = new File("./res/sound/Theme.wav");
         soundURL[1] = new File("./res/sound/coin.wav");
         soundURL[2] = new File("./res/sound/fanfare.wav");
@@ -24,11 +23,11 @@ public class Sound {
 
     }
 
-    public void setFile(int i){
+    public void setFile(int i) {
 
         try {
-            
-            AudioInputStream ais= AudioSystem.getAudioInputStream(soundURL[i]);
+
+            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
             clip = AudioSystem.getClip();
             clip.open(ais);
 
@@ -39,6 +38,7 @@ public class Sound {
             e.printStackTrace();
         }
     }
+
     public void setVolume(float volume) {
         if (volumeControl != null) {
             float range = volumeControl.getMaximum() - volumeControl.getMinimum();
@@ -47,15 +47,16 @@ public class Sound {
         }
     }
 
-    public void play(){
+    public void play() {
         clip.start();
     }
 
-    public void loop(){
+    public void loop() {
 
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
-    public void stop(){
+
+    public void stop() {
         clip.stop();
     }
 }

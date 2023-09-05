@@ -1,25 +1,24 @@
 
 package object;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import javax.imageio.ImageIO;
 
+import main.GamePanel;
 
-public class obj_chest_2 extends SuperObject{
-    public obj_chest_2(){
-        name= "Chest_2";
+public class obj_chest_2 extends SuperObject {
+    GamePanel gp;
+
+    public obj_chest_2(GamePanel gp) {
+        this.gp = gp;
+        name = "Chest_2";
         try {
-            File file = new File("./res/objects/chest2.png");
-            FileInputStream fis = new FileInputStream(file);
-            image = ImageIO.read(fis);
+            image = ImageIO.read(getClass().getResourceAsStream("/res/objects/chest2.png"));
+            uTool.scaledImage(image, gp.tileSize, gp.tileSize);
         } catch (Exception e) {
             e.printStackTrace();
         }
         collision = true;
 
     }
-    
-}
 
+}
