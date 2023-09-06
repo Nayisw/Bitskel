@@ -3,23 +3,19 @@ package entity;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import main.GamePanel;
 import main.KeyHandler;
-import main.UtilityTool;
 
 public class Player extends Entity {
-    GamePanel gp;
-    KeyHandler keyH;
 
+    KeyHandler keyH;
     public final int screenX;
     public final int screenY;
 
     public Player(GamePanel gp, KeyHandler keyH) {
-        this.gp = gp;
+
+        super(gp);
+
         this.keyH = keyH;
 
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
@@ -35,38 +31,25 @@ public class Player extends Entity {
     public void setDefaultValues() {
 
         worldX = 23 * gp.tileSize;
-        worldY = 21 * gp.tileSize;
+        worldY = 21* gp.tileSize;
         speed = 4;
         direction = "down";
+
+        maxLife = 6;
+        life = maxLife;
 
     }
 
     public void getPlayerImage() {
-        up1 = setup("boy_up_1");
-        up2 = setup("boy_up_2");
-        down1 = setup("boy_down_1");
-        down2 = setup("boy_down_2");
-        right1 = setup("boy_right_1");
-        right2 = setup("boy_right_2");
-        left1 = setup("boy_left_1");
-        left2 = setup("boy_left_2");
+        up1 = setup("/res/player/boy_up_1");
+        up2 = setup("/res/player/boy_up_2");
+        down1 = setup("/res/player/boy_down_1");
+        down2 = setup("/res/player/boy_down_2");
+        right1 = setup("/res/player/boy_right_1");
+        right2 = setup("/res/player/boy_right_2");
+        left1 = setup("/res/player/boy_left_1");
+        left2 = setup("/res/player/boy_left_2");
     }
-
-    public BufferedImage setup(String imageName) {
-
-        UtilityTool uTool = new UtilityTool();
-        BufferedImage image = null;
-
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("/res/player/" + imageName + ".png"));
-            image = uTool.scaledImage(image, gp.tileSize, gp.tileSize);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
     public void update() {
         if (keyH.leftPressed == true || keyH.rightPressed == true || keyH.upPressed == true
                 || keyH.downPressed == true) {
@@ -86,6 +69,13 @@ public class Player extends Entity {
 
             int objIndex = gp.cChecker.checkObject(this, true);
             pickUpObject(objIndex);
+
+            int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
+            interactNPC(npcIndex);
+
+            gp.eHandler.checkEvent();
+
+            gp.keyH.enterPressed = false;
 
             if (collisionOn == false) {
                 switch (direction) {
@@ -123,6 +113,16 @@ public class Player extends Entity {
 
         }
 
+    }
+
+    public void interactNPC(int i){
+        if (i != 999) {
+            if(gp.keyH.enterPressed == true){
+                gp.gameState = gp.dialogueState;
+                gp.npc[i].speak();
+            }
+        }
+        
     }
 
     public void draw(Graphics2D g2) {
@@ -167,6 +167,23 @@ public class Player extends Entity {
                 break;
 
         }
-        g2.drawImage(image, screenX, screenY, null);
+        int x = screenX;
+        int y = screenY;
+        if (screenX > worldX) {
+            x = worldX;
+        }
+        if (screenY > worldY) {
+            y = worldY;
+        }
+        int rightOffset = gp.screenWidth - screenX;
+        if (rightOffset > gp.worldWidth - worldX) {
+            x = gp.screenWidth - (gp.worldWidth - worldX);
+        }
+        int bottomOffset = gp.screenHeight - screenY;
+        if (bottomOffset > gp.worldHeight - worldY) {
+            y = gp.screenHeight - (gp.worldHeight - worldY);
+        }
+
+        g2.drawImage(image, x, y, null);
     }
 }
