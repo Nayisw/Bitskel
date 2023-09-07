@@ -29,7 +29,7 @@ public class Npc extends Entity {
         dialogue[0]= "What is goodie my gang!?";
         dialogue[1]= "Get a job lil nigga";
         dialogue[2]= "Shyu ki mummy";
-        dialogue[3]= "";
+        dialogue[3]= "This is like a very long pargraph so i need to use to like see if my sentence is corrected in this really small text box.";
         dialogue[4]= "";
         dialogue[5]= "";
     }

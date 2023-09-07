@@ -178,11 +178,10 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
         x += gp.tileSize;
         y += gp.tileSize;
-
+        
         for (String line : currentDialogue.split("\n")){
         g2.drawString(currentDialogue, x, y);
         y += 40;
-
         }
     }
     public void drawDeathScreen(){
@@ -224,8 +223,6 @@ public class UI {
             if(commandNum == 1){
             g2.drawString(">", x-gp.tileSize, y);
             }
-        
-
     }
 
     public void drawSubWindow(int x, int y, int width, int height){
