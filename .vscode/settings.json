@@ -1,0 +1,5 @@
+{
+    "discord.lowerDetailsIdling": "{empty}",
+    "discord.lowerDetailsEditing": "Workspace: {workspace} || Line: {current_line}",
+    "discord.detailsEditing": "Editing {file_name} "
+}

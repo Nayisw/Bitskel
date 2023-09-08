@@ -1,5 +1,6 @@
 package entity;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -10,23 +11,35 @@ import main.UtilityTool;
 
 public class Entity {
     GamePanel gp;
-    public int worldX, worldY;
-    public int speed;
-
+    
+    public BufferedImage image, image2, image3;
     public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-    public String direction;
-
-    public int spriteCounter = 0;
-    public int spriteNum = 1;
-
+    public BufferedImage atkup1, atkup2, atkdown1, atkdown2, atkleft1, atkleft2, atkright1, atkright2;
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
+    public Rectangle attackArea = new Rectangle(0,0,48,48);
     public int solidAreaDefaultX, solidAreaDefaultY;
-    public boolean collisionOn = false;
-    public int actionLockCounter = 0;
-
+    public boolean collision = false;
     String dialogue[]= new String[20];
+    
+    
+    //STATE
+    public int worldX, worldY;
+    public String direction = "down";
+    public int spriteNum = 1;
     int dialogueIndex = 0;
+    public boolean collisionOn = false;
+    public boolean invincible = false;
+    public boolean attacking = false;
 
+    //COUNTERS
+    public int spriteCounter = 0; 
+    public int actionLockCounter = 0; 
+    public int invincibleCount = 0;
+
+    //CHARACTER
+    public int speed;
+    public String name;  
+    public int type;
     public int maxLife;
     public int life;
 
@@ -62,7 +75,16 @@ public class Entity {
         collisionOn = false;
         gp.cChecker.checkTile(this);
         gp.cChecker.checkObject(this, false);
-        gp.cChecker.checkPlayer(this);
+        gp.cChecker.checkEntity(this, gp.npc);
+        gp.cChecker.checkEntity(this, gp.monster);
+        boolean contactPlayer = gp.cChecker.checkPlayer(this);
+
+        if(this.type ==2 && contactPlayer == true){
+            if(gp.player.invincible == false){
+                gp.player.life -=1;
+                gp.player.invincible = true;
+            }
+        }
 
         if (collisionOn == false) {
             switch (direction) {
@@ -89,6 +111,14 @@ public class Entity {
                 spriteNum = 1;
             }
             spriteCounter = 0;
+        }
+
+        if(invincible == true){
+            invincibleCount++;
+            if(invincibleCount > 30){
+                invincible = false;
+                invincibleCount = 0;
+            }
         }
     }
 
@@ -140,17 +170,22 @@ public class Entity {
                             break;
             
                     }
+                    if(invincible == true){
+                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F)); 
+                    }                 
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F)); 
+
         }
     }
-    public BufferedImage setup(String imagePath) {
+    public BufferedImage setup(String imagePath, int width, int screenHeight) {
 
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
 
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-            image = uTool.scaledImage(image, gp.tileSize, gp.tileSize);
+            image = uTool.scaledImage(image, gp.tileSize,gp.tileSize);
 
         } catch (IOException e) {
             e.printStackTrace();

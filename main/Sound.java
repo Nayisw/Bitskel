@@ -52,7 +52,6 @@ public class Sound {
     }
 
     public void loop() {
-
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 

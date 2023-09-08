@@ -39,7 +39,7 @@ public class KeyHandler implements KeyListener {
                 if(gp.ui.commandNum == 0){
                     gp.gameState = gp.playState;
                     gp.playerSE(1);
-                    gp.playMusic(0);
+                    gp.playMusic(5);
                 }
                 if(gp.ui.commandNum == 1){
 
@@ -53,7 +53,7 @@ public class KeyHandler implements KeyListener {
         
 
 
-        if (gp.gameState == gp.playState){
+        else if (gp.gameState == gp.playState){
             if (code == KeyEvent.VK_W) {
             upPressed = true;
             }
@@ -85,6 +85,7 @@ public class KeyHandler implements KeyListener {
         else if(gp.gameState == gp.pauseState){
             if (code == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.playState;
+                
             }
         }
         else if (gp.gameState == gp.dialogueState){

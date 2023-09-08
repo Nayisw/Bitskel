@@ -55,9 +55,9 @@ public class TileManager {
     }
     // TEXTURE LOADER
 
-    public void loadMap(String filePatth) {
+    public void loadMap(String filePath) {
         try {
-            InputStream is = new FileInputStream(filePatth);
+            InputStream is = new FileInputStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             int col = 0;

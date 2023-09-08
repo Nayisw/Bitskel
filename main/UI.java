@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-import object.SuperObject;
+import entity.Entity;
 import object.obj_heart;
 
 public class UI {
@@ -29,7 +29,6 @@ public class UI {
     public UI(GamePanel gp) {
         this.gp = gp;
 
-        
         try {
         InputStream is = getClass().getResourceAsStream("/res/font/FSEX300.ttf");
         FSEX300 = Font.createFont(Font.TRUETYPE_FONT, is);
@@ -43,20 +42,20 @@ public class UI {
             e.printStackTrace();
         }
 
-        SuperObject heart = new obj_heart(gp);
+        Entity heart = new obj_heart(gp);
         heart_full = heart.image;
         heart_half = heart.image2;
         heart_blank = heart.image3;
-    }
 
+        
+    }
     public void ShowMessage(String text) {
 
         message = text;
         messageOn = true;
     }
-
     public void draw(Graphics2D g2) {
-        this.g2 = g2;
+        this.g2 = g2; 
         g2.setFont(FSEX300);
         // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(Color.white);
@@ -66,6 +65,7 @@ public class UI {
         }
         if (gp.gameState == gp.playState) {
             drawPlayerLife();
+            gp.music.play();
             
         }
         if (gp.gameState == gp.pauseState) {
@@ -104,7 +104,6 @@ public class UI {
 
         }
     }
-
     public void drawTitleScreen(){
         g2.setColor(new Color(70, 120, 80));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
@@ -153,12 +152,9 @@ public class UI {
             g2.drawString(">", x-gp.tileSize, y);
         }
 
-
     }
-    
-
     public void drawPauseScreen() {
-
+        g2.setFont(FSEX300.deriveFont(Font.BOLD, 96F));
         String text = "PAUSED";
         int y;
         int x;
@@ -224,7 +220,6 @@ public class UI {
             g2.drawString(">", x-gp.tileSize, y);
             }
     }
-
     public void drawSubWindow(int x, int y, int width, int height){
         Color c= new Color(0, 0, 0, 210);
         g2.setColor(c);
@@ -235,7 +230,6 @@ public class UI {
         g2.setStroke(new BasicStroke(5));
         g2.drawRoundRect(x+5, y+5, width -10, height-10, 25, 25);
     }
-
     public int getXforCenteredText(String text) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         int x = gp.screenWidth / 2 - length / 2;
