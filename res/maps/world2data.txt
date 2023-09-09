@@ -1,0 +1,12 @@
+earth.png
+false
+grass.png
+false
+sand.png
+false
+tree.png
+true
+wall.png
+true
+water.png
+true

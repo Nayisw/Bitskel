@@ -7,12 +7,16 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import main.GamePanel;
 import main.KeyHandler;
+import object.obj_shield_wood;
+import object.obj_sword_normal;
 
 public class Player extends Entity {
 
     KeyHandler keyH;
     public final int screenX;
     public final int screenY;
+    int standCounter;
+    public boolean attackCanceled = false;
 
     public Player(GamePanel gp, KeyHandler keyH) {
 
@@ -38,23 +42,47 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
 
-        worldX = 23 * gp.tileSize;
-        worldY = 21* gp.tileSize;
+        worldX = 49 * gp.tileSize;
+        worldY = 49 * gp.tileSize;
         speed = 4;
         direction = "down";
 
         maxLife = 6;
         life = maxLife;
+        strength = 1;
+        dexterity = 1;
+        exp = 0;
+        nextLevelExp = 5;
+        coin = 0;
+        currentWeapon = new obj_sword_normal(gp);
+        currentShield = new obj_shield_wood(gp);
+        attack = getAttack();
+        defence = getDefence();
 
     }
+    public int getAttack(){
+        return attack = strength * currentWeapon.attackValue;
+
+    }
+    public int getDefence(){
+        return defence = dexterity * currentShield.defenceValue;
+    }
+        
 
     public void getPlayerImage() {
+        up = setup("/res/player/boy_up", gp.tileSize,gp.tileSize);
         up1 = setup("/res/player/boy_up_1", gp.tileSize,gp.tileSize);
         up2 = setup("/res/player/boy_up_2", gp.tileSize,gp.tileSize);
+
+        down = setup("/res/player/boy_down", gp.tileSize,gp.tileSize);
         down1 = setup("/res/player/boy_down_1", gp.tileSize,gp.tileSize);
         down2 = setup("/res/player/boy_down_2", gp.tileSize,gp.tileSize);
+
+        right = setup("/res/player/boy_right", gp.tileSize,gp.tileSize);
         right1 = setup("/res/player/boy_right_1", gp.tileSize,gp.tileSize);
         right2 = setup("/res/player/boy_right_2", gp.tileSize,gp.tileSize);
+
+        left = setup("/res/player/boy_left", gp.tileSize,gp.tileSize);
         left1 = setup("/res/player/boy_left_1", gp.tileSize,gp.tileSize);
         left2 = setup("/res/player/boy_left_2", gp.tileSize,gp.tileSize);
     }
@@ -103,8 +131,10 @@ public class Player extends Entity {
 
             //MONSTER COLLISION
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-            gp.eHandler.checkEvent();
             contactMonster(monsterIndex);
+            
+            gp.eHandler.checkEvent();
+            
 
             
             if (collisionOn == false && keyH.enterPressed == false) {
@@ -123,6 +153,11 @@ public class Player extends Entity {
                         break;
                 }
             }
+            if(keyH.enterPressed == true && attackCanceled == false){
+                attacking = true;
+                spriteCounter = 0;
+            }
+            attackCanceled = false;
             gp.keyH.enterPressed = false;
 
 
@@ -135,6 +170,14 @@ public class Player extends Entity {
                 }
                 spriteCounter = 0;
             }
+        }
+        else {
+            standCounter++;
+            if(standCounter == 20){
+                spriteNum = 1;
+                standCounter = 0;
+            }
+            
         }
         if(invincible == true){
             invincibleCount++;
@@ -201,16 +244,11 @@ public class Player extends Entity {
     public void interactNPC(int i){
         if(keyH.enterPressed == true){
         if (i != 999) {
+                attackCanceled = true;
                 gp.gameState = gp.dialogueState;
                 gp.npc[i].speak();
-            }
-        else {
-            if(gp.keyH.enterPressed == true){
-                attacking = true;
-            }  
+            } 
         }
-    }
-        
     }
     public void contactMonster(int i){
         if( i != 999){
@@ -224,11 +262,13 @@ public class Player extends Entity {
     public void damageMonster(int i){
         if(i !=999){
          if(gp.monster[i].invincible == false){
+
             gp.monster[i].life -= 1;
             gp.monster[i].invincible = true;
+            gp.monster[i].damageReaction();
 
             if(gp.monster[i].life <=0){
-                gp.monster[i] = null;
+                gp.monster[i].dying = true;
             }
          }
         }
@@ -313,10 +353,5 @@ public class Player extends Entity {
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F)); 
 
-
-        //DEBUG
-        // g2.setFont(new Font("Arial", Font.PLAIN, 48));
-        // g2.setColor(Color.white);
-        // g2.drawString("Invincible Count: "+invincibleCount, 10, 400);
     }
 }

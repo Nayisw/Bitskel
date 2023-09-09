@@ -91,7 +91,9 @@ public class EvenHandler {
     public void HealingPool(int gameState){
 
         if(gp.keyH.enterPressed == true){
+
             gp.gameState = gameState;
+            gp.player.attackCanceled = true;
             gp.ui.currentDialogue = "Phew!..";
             gp.player.life = gp.player.maxLife;
             

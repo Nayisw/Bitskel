@@ -17,109 +17,125 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
     }
-    
+
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
+        //ALL THE PLAYSTATES
+        if (gp.gameState == gp.titleState) {titleState(code);}
+        else if (gp.gameState == gp.playState) {playState(code);} 
+        else if (gp.gameState == gp.pauseState) {pauseState(code);} 
+        else if (gp.gameState == gp.dialogueState) {dialogueState(code);} 
+        else if (gp.gameState == gp.deathState) {deathState(code);} 
+        else if (gp.characterState == gp.characterState) {characterState(code);}
+    }
 
-        if (gp.gameState == gp.titleState) {
-            if (code == KeyEvent.VK_W) {
-                gp.ui.commandNum --;
-                if(gp.ui.commandNum < 0 ){
-                    gp.ui.commandNum = 2;
-                }
-            }
-            if (code == KeyEvent.VK_S) {
-                gp.ui.commandNum ++;
-                if(gp.ui.commandNum > 2 ){
-                    gp.ui.commandNum = 0;
-                }
-            }
-            if(code == KeyEvent.VK_ENTER){
-                if(gp.ui.commandNum == 0){
-                    gp.gameState = gp.playState;
-                    gp.playerSE(1);
-                    gp.playMusic(5);
-                }
-                if(gp.ui.commandNum == 1){
-
-                    
-                }
-                if(gp.ui.commandNum == 2){
-                    System.exit(0);
-                }
+    public void titleState(int code) {
+        if (code == KeyEvent.VK_W) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 2;
             }
         }
-        
+        if (code == KeyEvent.VK_S) {
+            gp.ui.commandNum++;
+            if (gp.ui.commandNum > 2) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNum == 0) {
+                gp.gameState = gp.playState;
+                gp.playerSE(1);
+                gp.playMusic(5);
+            }
+            if (gp.ui.commandNum == 1) {
 
+            }
+            if (gp.ui.commandNum == 2) {
+                System.exit(0);
+            }
+        }
+    }
 
-        else if (gp.gameState == gp.playState){
-            if (code == KeyEvent.VK_W) {
+    public void playState(int code) {
+        if (code == KeyEvent.VK_W) {
             upPressed = true;
-            }
-            if (code == KeyEvent.VK_S) {
+        }
+        if (code == KeyEvent.VK_S) {
             downPressed = true;
-            }
-            if (code == KeyEvent.VK_A) {
+        }
+        if (code == KeyEvent.VK_A) {
             leftPressed = true;
-            }
-            if (code == KeyEvent.VK_D) {
+        }
+        if (code == KeyEvent.VK_D) {
             rightPressed = true;
-            }
-            if (code == KeyEvent.VK_ENTER) {
+        }
+        if (code == KeyEvent.VK_C) {
+            gp.gameState = gp.characterState;
+        }
+        if (code == KeyEvent.VK_ENTER) {
             enterPressed = true;
             gp.playerSE(1);
-            };
-            if (code == KeyEvent.VK_F1) {
-                if (checkDrawTime == false) {
+        }
+        ;
+        if (code == KeyEvent.VK_F1) {
+            if (checkDrawTime == false) {
                 checkDrawTime = true;
-                } else if (checkDrawTime == true) {
+            } else if (checkDrawTime == true) {
                 checkDrawTime = false;
-                }
             }
-            if (code == KeyEvent.VK_ESCAPE) {
-                gp.gameState = gp.pauseState;
-            }
+        }
+        if (code == KeyEvent.VK_ESCAPE) {
+            gp.gameState = gp.pauseState;
+        }
+    }
+
+    public void pauseState(int code) {
+        if (code == KeyEvent.VK_ESCAPE) {
+            gp.gameState = gp.playState;
 
         }
-        else if(gp.gameState == gp.pauseState){
-            if (code == KeyEvent.VK_ESCAPE) {
-                gp.gameState = gp.playState;
-                
+    }
+
+    public void dialogueState(int code) {
+        if (code == KeyEvent.VK_ENTER) {
+            gp.gameState = gp.playState;
+        }
+    }
+
+    public void deathState(int code) {
+        if (code == KeyEvent.VK_W) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 1;
             }
         }
-        else if (gp.gameState == gp.dialogueState){
-            if(code== KeyEvent.VK_ENTER){
-                gp.gameState = gp.playState;
+        if (code == KeyEvent.VK_S) {
+            gp.ui.commandNum++;
+            if (gp.ui.commandNum > 1) {
+                gp.ui.commandNum = 0;
             }
         }
-        else if (gp.gameState == gp.deathState) {
-            if (code == KeyEvent.VK_W) {
-                gp.ui.commandNum --;
-                if(gp.ui.commandNum < 0 ){
-                    gp.ui.commandNum = 1;
-                }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNum == 0) {
+                gp.gameState = gp.titleState;
+                gp.playerSE(1);
+                gp.player.life = gp.player.maxLife;
+                gp.player.worldX = 23 * gp.tileSize;
+                gp.player.worldY = 21 * gp.tileSize;
+                gp.player.direction = "down";
+
             }
-            if (code == KeyEvent.VK_S) {
-                gp.ui.commandNum ++;
-                if(gp.ui.commandNum > 1){
-                    gp.ui.commandNum = 0;
-                }
+            if (gp.ui.commandNum == 1) {
+                System.exit(0);
             }
-            if(code == KeyEvent.VK_ENTER){
-                if(gp.ui.commandNum == 0){
-                    gp.gameState= gp.titleState;
-                    gp.playerSE(1);
-                    gp.player.life = gp.player.maxLife;
-                    gp.player.worldX = 23 * gp.tileSize;
-                    gp.player.worldY = 21* gp.tileSize;
-                    gp.player.direction= "down";
-                    
-                }
-                if(gp.ui.commandNum == 1){
-                    System.exit(0);
-                }
-            }
+        }
+    }
+
+    public void characterState(int code) {
+        if (code == KeyEvent.VK_C) {
+            gp.gameState = gp.playState;
         }
     }
 
