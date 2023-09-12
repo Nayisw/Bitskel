@@ -27,18 +27,18 @@ public class Npc extends Entity {
     }
     public void setDialogue(){
         dialogue[0]= "What is goodie my gang!?";
-        dialogue[1]= "Get a job lil nigga";
-        dialogue[2]= "Shyu ki mummy";
-        dialogue[3]= "This is like a very long pargraph so \ni need to use to like see if my \nsentence is corrected in this really \nsmall text box.";
-        dialogue[4]= "";
-        dialogue[5]= "";
+        dialogue[1]= ".";
+        dialogue[2]= "..";
+        dialogue[3]= "...";
+        dialogue[4]= "....";
+        dialogue[5]= ".....";
     }
     public void setAction(){
 
         actionLockCounter++;
         if(actionLockCounter == 120){
             Random random = new Random();
-        int i = random.nextInt(100)+1;
+            int i = random.nextInt(100)+1;
 
         if(i <= 25){
             direction = "up";

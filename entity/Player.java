@@ -1,22 +1,30 @@
 package entity;
 
 import java.awt.AlphaComposite;
-
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import javax.swing.plaf.multi.MultiColorChooserUI;
+
 import main.GamePanel;
 import main.KeyHandler;
+import object.obj_fireball;
+import object.obj_key;
 import object.obj_shield_wood;
 import object.obj_sword_normal;
 
 public class Player extends Entity {
-
+    
     KeyHandler keyH;
     public final int screenX;
     public final int screenY;
     int standCounter;
     public boolean attackCanceled = false;
+    public ArrayList<Entity> inventory = new ArrayList<>();
+    public final int maxInventorySize = 20;
 
     public Player(GamePanel gp, KeyHandler keyH) {
 
@@ -24,22 +32,28 @@ public class Player extends Entity {
 
         this.keyH = keyH;
 
+
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
         solidArea = new Rectangle(8, 16, 32, 32);
+        solidArea.x = 8;
+        solidArea.y = 16;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-        
+        solidArea.width = 32;
+        solidArea.height = 32;
+
         attackArea.width = 36;
         attackArea.height = 36;
-        
+ 
         getPlayerImage();
         setDefaultValues();
         getPlayerAtkImage();
+        setItems();
 
     }
-
+        //PLAYER FUNCTIONS
     public void setDefaultValues() {
 
         worldX = 49 * gp.tileSize;
@@ -47,8 +61,11 @@ public class Player extends Entity {
         speed = 4;
         direction = "down";
 
+        level = 1;
         maxLife = 6;
         life = maxLife;
+        maxMana = 4;
+        mana = maxMana;
         strength = 1;
         dexterity = 1;
         exp = 0;
@@ -56,20 +73,28 @@ public class Player extends Entity {
         coin = 0;
         currentWeapon = new obj_sword_normal(gp);
         currentShield = new obj_shield_wood(gp);
+        projectile = new obj_fireball(gp);
         attack = getAttack();
         defence = getDefence();
 
     }
+    public void setItems(){
+
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new obj_key(gp));
+
+    }
     public int getAttack(){
+        attackArea = currentWeapon.attackArea;
         return attack = strength * currentWeapon.attackValue;
 
     }
     public int getDefence(){
         return defence = dexterity * currentShield.defenceValue;
     }
-        
-
     public void getPlayerImage() {
+
         up = setup("/res/player/boy_up", gp.tileSize,gp.tileSize);
         up1 = setup("/res/player/boy_up_1", gp.tileSize,gp.tileSize);
         up2 = setup("/res/player/boy_up_2", gp.tileSize,gp.tileSize);
@@ -87,18 +112,19 @@ public class Player extends Entity {
         left2 = setup("/res/player/boy_left_2", gp.tileSize,gp.tileSize);
     }
     public void getPlayerAtkImage(){
+        //ADD ATTAK IMAGES LATER
 
-        //TEMPORARY MONSTER RES
-
-        atkup1 = setup("/res/player/boy_up_1", gp.tileSize,gp.tileSize*2);
-        atkup2 = setup("/res/player/boy_up_2", gp.tileSize,gp.tileSize*2);
-        atkdown1 = setup("/res/player/boy_down_1", gp.tileSize,gp.tileSize*2);
-        atkdown2 = setup("/res/player/boy_down_2", gp.tileSize,gp.tileSize*2);
-        atkright1 = setup("/res/player/boy_right_1", gp.tileSize*2,gp.tileSize);
-        atkright2 = setup("/res/player/boy_right_2", gp.tileSize*2,gp.tileSize);
-        atkleft1 = setup("/res/player/boy_left_1", gp.tileSize*2,gp.tileSize);
-        atkleft2 = setup("/res/player/boy_left_2", gp.tileSize*2,gp.tileSize);
+        atkup1 = setup("/res/player/boy_attack_up_1", gp.tileSize,gp.tileSize*2);
+        atkup2 = setup("/res/player/boy_attack_up_2", gp.tileSize,gp.tileSize*2);
+        atkdown1 = setup("/res/player/boy_attack_down_1", gp.tileSize,gp.tileSize*2);
+        atkdown2 = setup("/res/player/boy_attack_down_2", gp.tileSize,gp.tileSize*2);
+        atkright1 = setup("/res/player/boy_attack_right_1", gp.tileSize*2,gp.tileSize);
+        atkright2 = setup("/res/player/boy_attack_right_2", gp.tileSize*2,gp.tileSize);
+        atkleft1 = setup("/res/player/boy_attack_left_1", gp.tileSize*2,gp.tileSize); 
+        atkleft2 = setup("/res/player/boy_attack_left_2", gp.tileSize*2,gp.tileSize);
     }
+   
+    //GENERAL METHODs
     public void update() {
         if(attacking == true){
             attacking();
@@ -139,21 +165,14 @@ public class Player extends Entity {
             
             if (collisionOn == false && keyH.enterPressed == false) {
                 switch (direction) {
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
+                    case "up":worldY -= speed;break;
+                    case "down":worldY += speed;break;
+                    case "left":worldX -= speed;break;
+                    case "right":worldX += speed;break;
                 }
             }
             if(keyH.enterPressed == true && attackCanceled == false){
+                // gp.playerSE();
                 attacking = true;
                 spriteCounter = 0;
             }
@@ -179,6 +198,19 @@ public class Player extends Entity {
             }
             
         }
+        //SHOOTING PROJECTILES
+        if(gp.keyH.shotKeyPressed == true && projectile.alive == false && shotAvailableCounter == 30 && projectile.haveResource(this) == true){
+
+            projectile.set(worldX, worldY, direction, true, this);
+        
+            projectile.substractResource(this);
+
+            gp.projectileList.add(projectile);
+
+            shotAvailableCounter = 0;
+            //SOUND
+            // gp.playerSE();
+        }
         if(invincible == true){
             invincibleCount++;
             if(invincibleCount > 60){
@@ -186,7 +218,18 @@ public class Player extends Entity {
                 invincibleCount = 0;
             }
         }
+        if(shotAvailableCounter < 30){
+            shotAvailableCounter++;
+        }
+        if(life > maxLife){
+            life = maxLife;
+        }
+        if(mana > maxMana){
+            mana = maxMana;
+        }
     }
+
+    //PLAYER FUNCTION 
     public void attacking(){
         
             spriteCounter++;
@@ -204,9 +247,9 @@ public class Player extends Entity {
 
             switch(direction){
                 case "up": worldY -= attackArea.height; break;
-                case "down": worldY += attackArea.height; break;
+                case "down": worldY += gp.tileSize; break;
                 case "left": worldX -= attackArea.width; break;
-                case "right": worldX += attackArea.width; break;
+                case "right": worldX += gp.tileSize; break;
 
             }
             solidArea.width = attackArea.width;
@@ -214,7 +257,7 @@ public class Player extends Entity {
             
             //MONSTER COLLISION
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-            damageMonster(monsterIndex);
+            damageMonster(monsterIndex , attack);
 
 
             worldX = currentWorldX;
@@ -229,51 +272,131 @@ public class Player extends Entity {
         }
         
     }
-
     public void pickUpObject(int i) {
 
         if (i != 999) {
-            if(invincible == false){
-                life -= 1;
-                invincible = true;
+            //OBTAINABLES
+            if(gp.obj[i].type == type_obtainable){
+                gp.obj[i].use(this);
+                gp.obj[i] = null;
             }
+            else{
+                //INVENTORY ITEMS
+                String text;
+
+                if(inventory.size() != maxInventorySize){
+                    inventory.add(gp.obj[i]);
+                    // Sound
+                    // gp.playerSE();
+
+                    text = "Picked up a "+ gp.obj[i].name +"!";
+
+                }
+                else {
+                    text= "Cannot carry more key!";
+                }
+                gp.ui.addMessage(text);
+                gp.obj[i]=null;
+            }
+
+            
         }
 
     }
-
     public void interactNPC(int i){
-        if(keyH.enterPressed == true){
+        if(gp.keyH.enterPressed == true){
         if (i != 999) {
                 attackCanceled = true;
                 gp.gameState = gp.dialogueState;
                 gp.npc[i].speak();
-            } 
+            }
+        
         }
     }
     public void contactMonster(int i){
         if( i != 999){
 
-            if(invincible == false){
-                life -= 1;
+            if(invincible == false && gp.monster[i].dying == false){
+                int damage = attack - gp.monster[i].attack - defence;
+                if(damage < 0){
+                damage = 0;
+
+                }
+                life -= damage;
                 invincible = true;
             }
         }
     }
-    public void damageMonster(int i){
+    public void damageMonster(int i, int attack){
         if(i !=999){
          if(gp.monster[i].invincible == false){
 
-            gp.monster[i].life -= 1;
+            int damage = attack - gp.monster[i].defence;
+            if(damage < 0){
+                damage = 0;
+
+            }
+
+
+            gp.monster[i].life -= damage;
+            gp.ui.addMessage(damage + " damage!");
             gp.monster[i].invincible = true;
             gp.monster[i].damageReaction();
 
             if(gp.monster[i].life <=0){
                 gp.monster[i].dying = true;
+                gp.ui.addMessage("Killed " + gp.monster[i].name + "!");
+                gp.ui.addMessage("Exp +"+ gp.monster[i].exp);
+                exp += gp.monster[i].exp;
+
+                checkLevelUp();
             }
          }
         }
     }
+    public void checkLevelUp(){
 
+        if(exp >= nextLevelExp){
+
+            level++;
+            nextLevelExp = nextLevelExp *2;
+            maxLife +=2;
+            strength++;
+            dexterity++;
+            attack = getAttack();
+            defence = getDefence();
+
+            //LEVEL UP SOUND HERE
+            // gp.playerSE();
+            gp.gameState = gp.dialogueState;
+            gp.ui.currentDialogue = "You are level " +level + " now!";
+
+        }
+    }
+    public void selectItem(){
+        int itemIndex = gp.ui.getItemIndexOnSlot();
+
+        if(itemIndex < inventory.size()){
+            Entity selectedItem = inventory.get(itemIndex);
+            if(selectedItem.type == type_sword || selectedItem.type == type_axe){
+                currentWeapon = selectedItem;
+                attack = getAttack();
+            }
+            if(selectedItem.type == type_shield){
+                currentShield = selectedItem;
+                defence = getDefence();
+
+            }
+            if(selectedItem.type == type_consumable){
+                selectedItem.use(this);
+                inventory.remove(itemIndex);
+
+            }
+        }
+
+    }
+
+    //GENERAL METHODs
     public void draw(Graphics2D g2) {
 
         int tempScreenX = screenX;
@@ -352,6 +475,13 @@ public class Player extends Entity {
         g2.drawImage(image, tempScreenX, tempScreenY, null);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F)); 
+
+        //DEBUG
+        if(gp.keyH.debugPressed == true){
+        g2.setColor(Color.red);
+        g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+    }
+        
 
     }
 }

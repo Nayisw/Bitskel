@@ -1,9 +1,12 @@
 package monster;
 
 import java.util.Random;
-
 import entity.Entity;
 import main.GamePanel;
+import object.obj_coin_bronze;
+import object.obj_fireball;
+import object.obj_heart;
+import object.obj_mana;
 
 public class mon_GreenSlime extends Entity {
     GamePanel gp;
@@ -11,12 +14,16 @@ public class mon_GreenSlime extends Entity {
     public mon_GreenSlime(GamePanel gp){
         super(gp);
         this.gp=gp;
-        type=2;
+        type= type_monster;
 
         name = "Green Smile";
         speed= 1;
         maxLife = 4;
         life = maxLife;
+        attack = 5;
+        defence = 0;
+        exp = 2;
+        projectile = new obj_fireball(gp);
 
         solidArea.x = 3;
         solidArea.y = 18;
@@ -58,12 +65,32 @@ public class mon_GreenSlime extends Entity {
             direction = "right";
         }
         actionLockCounter = 0;
+
+        }
+        int i = new Random().nextInt(100) + 1;  
+        if( i > 99 && projectile.alive == false && shotAvailableCounter == 30){
+            projectile.set(worldX, worldY, direction, true, this);
+            gp.projectileList.add(projectile);
+            shotAvailableCounter = 0;
+        }
+    }
+    public void checkDrop(){
+        int i = new Random().nextInt(100)+1;
+
+
+        if(i < 50){
+            dropItem(new obj_coin_bronze(gp));
+        }
+        if(i >= 50 & i <75){
+            dropItem(new obj_mana(gp));
+        }
+        if(i >= 75 && i < 100){
+            dropItem(new obj_heart(gp));
         }
     }
     public void damageReaction(){
-
-        actionLockCounter = 0 ;
         direction = gp.player.direction;
     }
-    
+       
 }
+

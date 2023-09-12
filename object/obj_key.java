@@ -9,6 +9,7 @@ public class obj_key extends Entity {
 
         name = "Key";
         down1 = setup ("/res/objects/key", gp.tileSize,gp.tileSize);
+        description = "["+ name + "]\n Can be used to open chests";
     }
 
 }

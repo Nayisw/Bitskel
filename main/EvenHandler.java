@@ -8,6 +8,7 @@ public class EvenHandler {
     int previousEventX, previousEventY;
     Boolean canTouchEvent = true;
     
+    //GENERAL METHODs
     public EvenHandler(GamePanel gp){
         this.gp= gp;
 
@@ -35,6 +36,7 @@ public class EvenHandler {
         
     }
     public void checkEvent(){
+
         int xDistance = Math.abs(gp.player.worldX - previousEventX);
         int yDistance = Math.abs(gp.player.worldX - previousEventY);
         int distance =  Math.max(xDistance, yDistance);
@@ -52,6 +54,7 @@ public class EvenHandler {
 
         
     }
+ 
     public boolean hit(int col, int row, String reqDirection){
 
         boolean hit = false;
@@ -81,10 +84,6 @@ public class EvenHandler {
         gp.gameState= gameState;
         gp.ui.currentDialogue  = "Ouch!";
         gp.player.life -= 1;
-        if(gp.player.life==0){
-            gp.gameState = gp.deathState;
-            gp.playerSE(2);
-        }
         canTouchEvent = false;
 
     }
@@ -96,9 +95,9 @@ public class EvenHandler {
             gp.player.attackCanceled = true;
             gp.ui.currentDialogue = "Phew!..";
             gp.player.life = gp.player.maxLife;
+            gp.player.mana = gp.player.maxMana;
             
         }
-        canTouchEvent = false;
     }
     
 }

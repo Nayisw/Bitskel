@@ -21,14 +21,14 @@ public class GamePanel extends JPanel implements Runnable {
     final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; // 48 pixels
-    public int maxScreenCol;
-    public int maxScreenRow;
+    public final int maxScreenCol = 16;
+    public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
 
     // WORLD SETTINGS
-    public int maxWorldCol = 50;
-    public int maxWorldRow = 50;
+    public final int maxWorldCol = 100;
+    public final int maxWorldRow = 100;
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxWorldRow;
 
@@ -46,9 +46,10 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
 
     public Player player = new Player(this, keyH);
-    public Entity obj[] = new Entity[10];
+    public Entity obj[] = new Entity[20];
     public Entity npc[]= new Entity[10];
     public Entity monster[]= new Entity[20];
+    public ArrayList<Entity> projectileList = new ArrayList<>();
     ArrayList<Entity> entityList = new ArrayList<>();
     
     
@@ -56,11 +57,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int gameState;
     public final int titleState = 0;
-    public int playState = 1;
+    public final int playState = 1;
     public final int pauseState = 2;
     public final int dialogueState = 3;
-    public final int deathState = 4;
-    public final int characterState = 5;
+    public final int characterState = 4;
 
 
     // GamePanel Settings
@@ -79,7 +79,6 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setMonster();
         gameState = titleState;
     }
-
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
@@ -115,7 +114,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
     }
-
     public void update() {
 
         if (gameState == playState) {
@@ -126,13 +124,24 @@ public class GamePanel extends JPanel implements Runnable {
                     npc[i].update();
                 }
             }
-            for(int i=0; i<monster.length; i++){
+            for(int i=0; i < monster.length; i++){
                 if(monster[i] != null){
                     if(monster[i].alive == true && monster[i].dying == false){
                         monster[i].update();
                     }     
                     if(monster[i].alive == false){
+                        monster[i].checkDrop();
                         monster[i] = null;
+                    }
+                }
+            }
+            for(int i=0; i<projectileList.size(); i++){
+                if(projectileList.get(i) != null){
+                    if(projectileList.get(i).alive == true ){
+                        projectileList.get(i).update();
+                    }     
+                    if(projectileList.get(i).alive == false){
+                        projectileList.remove(i);
                     }
                 }
             }
@@ -142,7 +151,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
     }
-
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
@@ -179,6 +187,11 @@ public class GamePanel extends JPanel implements Runnable {
                     entityList.add(monster[i]);
                 }
              }
+             for(int i =0; i< projectileList.size(); i++){
+                if(projectileList.get(i) != null){
+                    entityList.add(projectileList.get(i));
+                }
+             }
 
              Collections.sort(entityList, new Comparator<Entity>(){
 
@@ -194,8 +207,8 @@ public class GamePanel extends JPanel implements Runnable {
              for(int i= 0; i<entityList.size(); i++){
                 entityList.get(i).draw(g2);
              }
-             //Emoties the drawn Entity
-            entityList.clear();
+             //EMPTY the drawn Entity
+             entityList.clear();
             
             ui.draw(g2);
 
@@ -214,6 +227,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
+    //SOUND
     public void playMusic(int i) {
 
         music.setFile(i);
@@ -221,11 +235,9 @@ public class GamePanel extends JPanel implements Runnable {
         music.play();
         music.loop();
     }
-
     public void stopMusic() {
         music.stop();
     }
-
     public void playerSE(int i) {
 
         se.setVolume(1.0f);

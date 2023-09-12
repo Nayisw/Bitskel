@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     GamePanel gp;
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, shotKeyPressed, debugPressed;
 
     boolean checkDrawTime = false;
 
@@ -26,8 +26,7 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.playState) {playState(code);} 
         else if (gp.gameState == gp.pauseState) {pauseState(code);} 
         else if (gp.gameState == gp.dialogueState) {dialogueState(code);} 
-        else if (gp.gameState == gp.deathState) {deathState(code);} 
-        else if (gp.characterState == gp.characterState) {characterState(code);}
+        else if (gp.gameState == gp.characterState) {characterState(code);}
     }
 
     public void titleState(int code) {
@@ -71,24 +70,31 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D) {
             rightPressed = true;
         }
+        if (code == KeyEvent.VK_ENTER) {
+            enterPressed = true;
+        }
         if (code == KeyEvent.VK_C) {
             gp.gameState = gp.characterState;
         }
-        if (code == KeyEvent.VK_ENTER) {
-            enterPressed = true;
-            gp.playerSE(1);
+        if (code == KeyEvent.VK_ESCAPE) {
+            gp.gameState = gp.pauseState;
         }
-        ;
+ 
+        if (code == KeyEvent.VK_F) {
+            shotKeyPressed = true;
+        }
+
+        //DEBUG KEYS
+        
         if (code == KeyEvent.VK_F1) {
+            debugPressed = true;
             if (checkDrawTime == false) {
                 checkDrawTime = true;
             } else if (checkDrawTime == true) {
                 checkDrawTime = false;
             }
         }
-        if (code == KeyEvent.VK_ESCAPE) {
-            gp.gameState = gp.pauseState;
-        }
+        
     }
 
     public void pauseState(int code) {
@@ -104,38 +110,43 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    public void deathState(int code) {
-        if (code == KeyEvent.VK_W) {
-            gp.ui.commandNum--;
-            if (gp.ui.commandNum < 0) {
-                gp.ui.commandNum = 1;
-            }
-        }
-        if (code == KeyEvent.VK_S) {
-            gp.ui.commandNum++;
-            if (gp.ui.commandNum > 1) {
-                gp.ui.commandNum = 0;
-            }
-        }
-        if (code == KeyEvent.VK_ENTER) {
-            if (gp.ui.commandNum == 0) {
-                gp.gameState = gp.titleState;
-                gp.playerSE(1);
-                gp.player.life = gp.player.maxLife;
-                gp.player.worldX = 23 * gp.tileSize;
-                gp.player.worldY = 21 * gp.tileSize;
-                gp.player.direction = "down";
-
-            }
-            if (gp.ui.commandNum == 1) {
-                System.exit(0);
-            }
-        }
-    }
-
     public void characterState(int code) {
+
         if (code == KeyEvent.VK_C) {
             gp.gameState = gp.playState;
+        }
+        //INSERT SOUND LATER
+        if(code == KeyEvent.VK_W){
+            if(gp.ui.slotRow != 0){
+                gp.ui.slotRow--;
+            }
+                
+            
+        }
+        if(code == KeyEvent.VK_A){
+            if(gp.ui.slotCol != 0){
+                gp.ui.slotCol--;
+            }
+                
+            
+        }
+        if(code == KeyEvent.VK_S){
+            if(gp.ui.slotRow != 3){
+                gp.ui.slotRow++;
+            }
+                
+
+            
+        }
+        if(code == KeyEvent.VK_D){
+            if(gp.ui.slotCol != 4){
+                gp.ui.slotCol++;
+            }
+                
+
+        }
+        if(code == KeyEvent.VK_ENTER){
+            gp.player.selectItem();
         }
     }
 
@@ -154,5 +165,12 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D) {
             rightPressed = false;
         }
+        if (code == KeyEvent.VK_ENTER){
+            enterPressed = false;
+        }
+        if (code == KeyEvent.VK_F) {
+            shotKeyPressed = false;
+        }
+        
     }
 }
