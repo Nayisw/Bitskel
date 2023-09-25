@@ -7,8 +7,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.swing.plaf.multi.MultiColorChooserUI;
-
 import main.GamePanel;
 import main.KeyHandler;
 import object.obj_fireball;
@@ -398,7 +396,7 @@ public class Player extends Entity {
 
     //GENERAL METHODs
     public void draw(Graphics2D g2) {
-
+        
         int tempScreenX = screenX;
         int tempScreenY = screenY;
 
@@ -459,14 +457,16 @@ public class Player extends Entity {
         if (screenY > worldY) {
             y = worldY;
         }
-        int rightOffset = gp.screenWidth - screenX;
-        if (rightOffset > gp.worldWidth - worldX) {
-            x = gp.screenWidth - (gp.worldWidth - worldX);
-        }
-        int bottomOffset = gp.screenHeight - screenY;
-        if (bottomOffset > gp.worldHeight - worldY) {
-            y = gp.screenHeight - (gp.worldHeight - worldY);
-        }
+
+        
+        // int rightOffset = gp.screenWidth - screenX;
+        // if (rightOffset > gp.maxWorldRow - worldX) {
+        //     x = gp.screenWidth - (gp.maxWorldRow - worldX);
+        // }
+        // int bottomOffset = gp.screenHeight - screenY;
+        // if (bottomOffset > gp.maxWorldCol - worldY) {
+        //     y = gp.screenHeight - (gp.maxWorldCol - worldY);
+        // }
 
         if(invincible == true){
            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F)); 

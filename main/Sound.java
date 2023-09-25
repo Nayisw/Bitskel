@@ -11,7 +11,9 @@ public class Sound {
 
     Clip clip;
     File[] soundURL = new File[30];
-    FloatControl volumeControl;
+    FloatControl fc;
+    int volumeScale = 3;
+    float volume;
 
     public Sound() {
         soundURL[0] = new File("./res/sound/Theme.wav");
@@ -31,24 +33,26 @@ public class Sound {
             clip = AudioSystem.getClip();
             clip.open(ais);
 
-            volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            fc = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            checkVolume();
 
         } catch (Exception e) {
-
-            e.printStackTrace();
         }
     }
-
-    public void setVolume(float volume) {
-        if (volumeControl != null) {
-            float range = volumeControl.getMaximum() - volumeControl.getMinimum();
-            float gain = (range * volume) + volumeControl.getMinimum();
-            volumeControl.setValue(gain);
+    public void checkVolume(){
+        switch(volumeScale){
+            case 0: volume = -80f; break;
+            case 1: volume = -20f;break;
+            case 2: volume = -12f;break;
+            case 3: volume = -5f;break;
+            case 4: volume = 1f;break;
+            case 5: volume = 6f;break;
         }
+        fc.setValue(volume);
     }
 
     public void play() {
-        clip.start();
+
     }
 
     public void loop() {

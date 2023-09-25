@@ -5,13 +5,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.swing.text.PlainDocument;
+
 
 import entity.Entity;
 import object.obj_heart;
@@ -20,7 +20,7 @@ import object.obj_mana;
 public class UI {
     Graphics2D g2;
     GamePanel gp;
-    Font FSEX300,MicroSix;
+    Font FSEX300,MicroSix,PokemonGB;
     BufferedImage heart_full, heart_half, heart_blank, crystal_full, crystal_blank;
     public boolean messageOn = false;
     ArrayList<String> message = new ArrayList<>();
@@ -30,6 +30,7 @@ public class UI {
     public int commandNum = 0;
     public int slotCol = 0;
     public int slotRow = 0;
+    int subState = 0;
 
     public UI(GamePanel gp) {
 
@@ -41,6 +42,9 @@ public class UI {
         
         is = getClass().getResourceAsStream("/res/font/MicroSix-MVRjw.ttf");
         MicroSix = Font.createFont(Font.TRUETYPE_FONT, is);
+
+        is = getClass().getResourceAsStream("/res/font/PokemonGb-RAeo.ttf");
+        PokemonGB = Font.createFont(Font.TRUETYPE_FONT, is);
 
         }catch (FontFormatException e){
             e.printStackTrace();
@@ -59,11 +63,8 @@ public class UI {
         
     }
     public void addMessage(String text) {
-        
-        
         message.add(text);
         messageCounter.add(0);
-        g2.setFont(MicroSix);
     }
     
     public void draw(Graphics2D g2) {
@@ -77,7 +78,6 @@ public class UI {
         }
         if (gp.gameState == gp.playState) {
             drawPlayerLife();
-            gp.music.play();
             drawMessage();
             
         }
@@ -93,6 +93,9 @@ public class UI {
         if (gp.gameState == gp.characterState){
             drawCharacterScreen();
             drawInventory();
+        }
+        if (gp.gameState == gp.optionsState){
+            drawOptionsScreen();
         }
     }
     public void drawPlayerLife(){   
@@ -140,7 +143,7 @@ public class UI {
         int messageX = gp.tileSize;
         int messageY = gp.tileSize * 4;
 
-        g2.setFont(MicroSix.deriveFont(Font.PLAIN, 18F));
+        g2.setFont(PokemonGB.deriveFont(Font.BOLD, 12F));
 
         for(int i = 0; i < message.size(); i++){
             if(message.get(i) != null){
@@ -339,6 +342,7 @@ public class UI {
 
     }
     public void drawInventory(){
+
         //FRAME
         int frameX= gp.tileSize *9;
         int frameY= gp.tileSize;
@@ -403,6 +407,132 @@ public class UI {
         }
 
     }
+    public void drawOptionsScreen(){
+
+
+        g2.setColor(Color.white);
+        g2.setFont(g2.getFont().deriveFont(32F ));
+
+
+        int frameX = gp.tileSize * 6;
+        int frameY = gp.tileSize;
+        int frameWidth = gp.tileSize * 8;
+        int frameHeight = gp.tileSize * 10;
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+    
+        switch(subState){
+            case 0: options_top(frameX,frameY); break;
+            case 1: options_fullScreenNotification( frameX,  frameY);break;
+            case 2: break;
+        }
+
+        gp.keyH.enterPressed = false;
+    }   
+    public void options_top(int frameX, int frameY){
+
+        int textX;
+        int textY;
+
+        String text = "Options";
+        textX = getXforCenteredText(text);
+        textY = frameY + gp.tileSize;
+        g2.drawString(text, textX, textY);
+
+        textX = frameX + gp.tileSize;
+        textY += gp.tileSize * 2;
+        g2.drawString("Full Screen", textX, textY);
+        if(commandNum == 0){
+            g2.drawString(">", textX- 25, textY);
+            if(gp.keyH.enterPressed == true){
+                if(gp.fullScreenOn == false){
+                    gp.fullScreenOn = true;
+                }
+                else if (gp.fullScreenOn == true){
+                    gp.fullScreenOn = false;
+                }
+                subState = 1;
+            }
+            
+        }
+
+        textY += gp.tileSize;
+        g2.drawString("Music", textX, textY);
+        if(commandNum == 1){
+            g2.drawString(">", textX- 25, textY);
+        }
+
+        textY += gp.tileSize;
+        g2.drawString("Sound Effect", textX, textY);
+        if(commandNum == 2){
+            g2.drawString(">", textX- 25, textY);
+        }
+
+        textY += gp.tileSize;
+        g2.drawString("Back", (textX * 2) - 100 , textY + 95);
+        if(commandNum == 3){
+            g2.drawString(">", textX- 25, textY);
+        }
+
+
+        textY += gp.tileSize * 2;
+        g2.drawString("Quit Game", textX, textY);
+        if(commandNum == 4){
+            g2.drawString(">", textX- 25, textY);
+        }
+
+        
+        textX = frameX + gp.tileSize * 5;
+        textY = frameY + gp.tileSize * 2 + 26;
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRect(textX, textY, 24, 24);
+        if(gp.fullScreenOn == true){
+            g2.fillRect(textX, textY, 24, 24);
+        }
+
+        textY += gp.tileSize;
+        g2.drawRect(textX, textY, 100,  24);
+        int volumeWidth = 20 * gp.music.volumeScale;
+        g2.fillRect(textX, textY, volumeWidth, 24);
+
+
+        textY += gp.tileSize;
+        g2.drawRect(10 + textX, textY, 90,  24);
+        volumeWidth =18 * gp.se.volumeScale;
+        g2.fillRect(10 + textX, textY, volumeWidth, 24);
+
+
+
+
+
+
+    }
+
+    public  void options_fullScreenNotification(int frameX, int frameY){
+        
+
+        int textX = frameX + gp.tileSize;
+        int textY = frameY + gp.tileSize * 3 ;
+
+        g2.setFont(FSEX300.deriveFont( 20F));
+        currentDialogue = "Change will take affect after\nrestarting the game!";
+        
+        for(String line : currentDialogue.split("\n")){
+            g2.drawString(line, textX, textY);
+            textY += 40;
+        }
+
+        textY = frameY + gp.tileSize * 9;
+        g2.drawString("Back", textX, textY);
+        if(commandNum == 0){
+            g2.drawString(">", textX- 25, textY);
+            if(gp.keyH.enterPressed == true){
+                subState =  0;
+            }
+        }
+
+    }
+    
+    
     public int getItemIndexOnSlot(){
         int itemIndex = slotCol + (slotRow * 5);
         return itemIndex;
