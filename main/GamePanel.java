@@ -4,8 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+// import java.awt.GraphicsDevice;
+// import java.awt.GraphicsEnvironment;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,17 +96,16 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void setFullScreen(){
         
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        // GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        // GraphicsDevice gd = ge.getDefaultScreenDevice();
         //  gd.setFullScreenWindow(Main.window);
 
 
-        screenWidth2 = Main.window.getWidth();
-        screenHeight2 = Main.window.getHeight();
+        // screenWidth2 = Main.window.getWidth();
+        // screenHeight2 = Main.window.getHeight();
 
 
     }
-
 
     public void startGameThread() {
         gameThread = new Thread(this);

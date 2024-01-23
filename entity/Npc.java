@@ -27,7 +27,7 @@ public class Npc extends Entity {
     }
     public void setDialogue(){
         dialogue[0]= "What is goodie my gang!?";
-        dialogue[1]= ".";
+        dialogue[1]= "Mujhe sexyboy123 naam wale lardko se nafrat hai :D";
         dialogue[2]= "..";
         dialogue[3]= "...";
         dialogue[4]= "....";
